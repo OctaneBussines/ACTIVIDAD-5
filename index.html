@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ClimaApp - Solución de Errores</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2193b0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .api-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        .troubleshooting {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .troubleshooting h3 {
+            color: #2193b0;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .troubleshooting-content {
+            display: none;
+        }
+        
+        .troubleshooting-content ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .troubleshooting-content li {
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .api-key-container {
+            padding: 15px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .api-key-container input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .api-key-container button {
+            width: 100%;
+            padding: 12px;
+            background: #2193b0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .api-key-container button:hover {
+            background: #1a7a94;
+        }
+        
+        .search-container {
+            padding: 20px;
+            display: flex;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #2193b0;
+            border-radius: 10px 0 0 10px;
+            background: #f1f1f1;
+            font-size: 16px;
+        }
+        
+        .search-container button {
+            padding: 15px 20px;
+            background: #2193b0;
+            color: white;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-container button:hover {
+            background: #1a7a94;
+        }
+        
+        .weather-info {
+            padding: 20px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .city-name {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .temperature {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #2193b0;
+        }
+        
+        .weather-description {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .weather-icon {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+        
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            background: #f1f1f1;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .detail-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .detail-item i {
+            font-size: 20px;
+            color: #2193b0;
+            margin-bottom: 5px;
+        }
+        
+        .error-message {
+            padding: 20px;
+            text-align: center;
+            color: #e74c3c;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+        
+        .error-details {
+            margin-top: 10px;
+            font-size: 14px;
+            background: #ffecec;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .loading {
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #2193b0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .demo-mode {
+            padding: 10px;
+            text-align: center;
+            background: #e3f2fd;
+            color: #1976d2;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cloud-sun"></i> ClimaApp</h1>
+            <p>Consulta el clima de cualquier ciudad</p>
+            <div class="api-status" id="api-status">API: Sin verificar</div>
+        </div>
+        
+        <div class="troubleshooting">
+            <h3 id="troubleshooting-toggle">Solución de problemas <i class="fas fa-chevron-down"></i></h3>
+            <div class="troubleshooting-content" id="troubleshooting-content">
+                <p>Si ves "API key inválida", podría deberse a:</p>
+                <ul>
+                    <li>La API key no ha sido activada (puede tardar algunas horas)</li>
+                    <li>Has excedido el límite de solicitudes de la API gratuita</li>
+                    <li>La API key fue revocada o eliminada</li>
+                    <li>Problemas de conexión a internet</li>
+                </ul>
+                <p>Mientras tanto, puedes usar el modo de demostración.</p>
+            </div>
+        </div>
+        
+        <div class="api-key-container">
+            <input type="text" id="api-key-input" placeholder="Pega aquí tu API key de OpenWeatherMap">
+            <button id="verify-btn">Verificar API Key</button>
+        </div>
+        
+        <div class="demo-mode" id="demo-mode">
+            <i class="fas fa-info-circle"></i> Usando modo de demostración con datos de ejemplo
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Ingresa el nombre de una ciudad...">
+            <button id="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <div class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px;">Buscando información...</p>
+        </div>
+        
+        <div class="error-message" id="error-message">
+            <i class="fas fa-exclamation-circle" style="font-size: 40px; margin-bottom: 15px;"></i>
+            <p id="error-text">Error al obtener datos del clima</p>
+            <div class="error-details" id="error-details">
+                Detalles del error aparecerán aquí
+            </div>
+        </div>
+        
+        <div class="weather-info" id="weather-info">
+            <h2 class="city-name" id="city-name">Ciudad</h2>
+            <div class="temperature" id="temperature">0°C</div>
+            <div class="weather-description">
+                <i class="weather-icon fas fa-cloud" id="weather-icon"></i>
+                <span id="weather-description">Descripción</span>
+            </div>
+            
+            <div class="details">
+                <div class="detail-item">
+                    <i class="fas fa-temperature-high"></i>
+                    <p>Máx: <span id="temp-max">0°C</span></p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-temperature-low"></i>
+                    <p>Mín: <span id="temp-min">0°C</span></p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-wind"></i>
+                    <p>Viento: <span id="wind">0 km/h</span></p>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-tint"></i>
+                    <p>Humedad: <span id="humidity">0%</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Usando OpenWeatherMap API</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos DOM
+            const apiKeyInput = document.getElementById('api-key-input');
+            const verifyBtn = document.getElementById('verify-btn');
+            const cityInput = document.getElementById('city-input');
+            const searchBtn = document.getElementById('search-btn');
+            const weatherInfo = document.getElementById('weather-info');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            const errorDetails = document.getElementById('error-details');
+            const loading = document.querySelector('.loading');
+            const apiStatus = document.getElementById('api-status');
+            const troubleshootingToggle = document.getElementById('troubleshooting-toggle');
+            const troubleshootingContent = document.getElementById('troubleshooting-content');
+            const demoMode = document.getElementById('demo-mode');
+            
+            // Variables de estado
+            let apiKey = '';
+            let isDemoMode = false;
+            let apiVerified = false;
+            
+            // Cargar API key guardada si existe
+            const savedApiKey = localStorage.getItem('weatherApiKey');
+            if (savedApiKey) {
+                apiKeyInput.value = savedApiKey;
+                apiKey = savedApiKey;
+                apiStatus.textContent = 'API: Guardada';
+                apiStatus.style.background = 'rgba(255, 255, 255, 0.3)';
+                apiVerified = true;
+            }
+            
+            // Alternar visibilidad de solución de problemas
+            troubleshootingToggle.addEventListener('click', function() {
+                const isVisible = troubleshootingContent.style.display === 'block';
+                troubleshootingContent.style.display = isVisible ? 'none' : 'block';
+                troubleshootingToggle.querySelector('i').className = isVisible ? 
+                    'fas fa-chevron-down' : 'fas fa-chevron-up';
+            });
+            
+            // Verificar API key
+            verifyBtn.addEventListener('click', function() {
+                const key = apiKeyInput.value.trim();
+                if (key) {
+                    // Guardar API key
+                    apiKey = key;
+                    localStorage.setItem('weatherApiKey', key);
+                    apiStatus.textContent = 'API: Verificando...';
+                    apiStatus.style.background = '#ff9800';
+                    
+                    // Verificar la API key haciendo una solicitud de prueba
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=London&appid=${apiKey}`)
+                        .then(response => {
+                            if (response.ok) {
+                                apiStatus.textContent = 'API: Válida ✔️';
+                                apiStatus.style.background = 'rgba(46, 204, 113, 0.3)';
+                                apiVerified = true;
+                                isDemoMode = false;
+                                demoMode.style.display = 'none';
+                            } else {
+                                throw new Error('API key inválida');
+                            }
+                        })
+                        .catch(error => {
+                            apiStatus.textContent = 'API: Inválida ❌';
+                            apiStatus.style.background = 'rgba(231, 76, 60, 0.3)';
+                            showError('API key inválida', 'La clave API no pudo ser verificada. ' +
+                                'Puede que no esté activada aún o haya excedido el límite de solicitudes. ' +
+                                'La aplicación funcionará en modo de demostración.');
+                            isDemoMode = true;
+                            demoMode.style.display = 'block';
+                        });
+                }
+            });
+            
+            // Mapeo de condiciones climáticas a iconos
+            const weatherIcons = {
+                '01d': 'fa-sun',
+                '01n': 'fa-moon',
+                '02d': 'fa-cloud-sun',
+                '02n': 'fa-cloud-moon',
+                '03d': 'fa-cloud',
+                '03n': 'fa-cloud',
+                '04d': 'fa-cloud',
+                '04n': 'fa-cloud',
+                '09d': 'fa-cloud-showers-heavy',
+                '09n': 'fa-cloud-showers-heavy',
+                '10d': 'fa-cloud-sun-rain',
+                '10n': 'fa-cloud-moon-rain',
+                '11d': 'fa-bolt',
+                '11n': 'fa-bolt',
+                '13d': 'fa-snowflake',
+                '13n': 'fa-snowflake',
+                '50d': 'fa-smog',
+                '50n': 'fa-smog'
+            };
+            
+            // Función para buscar el clima
+            function searchWeather() {
+                const city = cityInput.value.trim();
+                
+                if (city === '') {
+                    showError('Campo vacío', 'Por favor, ingresa el nombre de una ciudad');
+                    return;
+                }
+                
+                // Mostrar carga
+                loading.style.display = 'block';
+                weatherInfo.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                if (isDemoMode || !apiVerified) {
+                    // Modo demostración
+                    setTimeout(() => {
+                        showDemoWeather(city);
+                        loading.style.display = 'none';
+                    }, 1000);
+                } else {
+                    // Hacer la solicitud real a la API
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=es`)
+                        .then(response => {
+                            if (!response.ok) {
+                                if (response.status === 401) {
+                                    throw new Error('API key inválida. La aplicación cambiará a modo demostración.');
+                                } else if (response.status === 404) {
+                                    throw new Error('Ciudad no encontrada. Intenta con otro nombre.');
+                                } else {
+                                    throw new Error('Error al obtener datos del clima.');
+                                }
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            displayWeather(data);
+                        })
+                        .catch(error => {
+                            // Cambiar a modo demo si hay error con la API
+                            isDemoMode = true;
+                            demoMode.style.display = 'block';
+                            showDemoWeather(city);
+                        })
+                        .finally(() => {
+                            loading.style.display = 'none';
+                        });
+                }
+            }
+            
+            // Función para mostrar el clima real
+            function displayWeather(data) {
+                const cityName = data.name;
+                const country = data.sys.country;
+                const temp = Math.round(data.main.temp);
+                const tempMax = Math.round(data.main.temp_max);
+                const tempMin = Math.round(data.main.temp_min);
+                const humidity = data.main.humidity;
+                const wind = Math.round(data.wind.speed * 3.6);
+                const description = data.weather[0].description;
+                const iconCode = data.weather[0].icon;
+                
+                updateWeatherUI(cityName, country, temp, tempMax, tempMin, humidity, wind, description, iconCode);
+            }
+            
+            // Función para mostrar datos de demostración
+            function showDemoWeather(city) {
+                // Generar datos aleatorios para demostración
+                const temp = Math.floor(Math.random() * 30) + 5; // Entre 5°C y 35°C
+                const tempMax = temp + Math.floor(Math.random() * 5);
+                const tempMin = temp - Math.floor(Math.random() * 5);
+                const humidity = Math.floor(Math.random() * 50) + 30; // Entre 30% y 80%
+                const wind = Math.floor(Math.random() * 20) + 5; // Entre 5 km/h y 25 km/h
+                
+                const weatherConditions = [
+                    {desc: 'soleado', icon: '01d'},
+                    {desc: 'parcialmente nublado', icon: '02d'},
+                    {desc: 'nublado', icon: '03d'},
+                    {desc: 'lluvia ligera', icon: '10d'},
+                    {desc: 'tormenta', icon: '11d'}
+                ];
+                
+                const randomWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+                
+                updateWeatherUI(city, "Demo", temp, tempMax, tempMin, humidity, wind, randomWeather.desc, randomWeather.icon);
+            }
+            
+            // Función para actualizar la UI con datos del clima
+            function updateWeatherUI(cityName, country, temp, tempMax, tempMin, humidity, wind, description, iconCode) {
+                document.getElementById('city-name').textContent = `${cityName}, ${country}`;
+                document.getElementById('temperature').textContent = `${temp}°C`;
+                document.getElementById('temp-max').textContent = `${tempMax}°C`;
+                document.getElementById('temp-min').textContent = `${tempMin}°C`;
+                document.getElementById('humidity').textContent = `${humidity}%`;
+                document.getElementById('wind').textContent = `${wind} km/h`;
+                document.getElementById('weather-description').textContent = description.charAt(0).toUpperCase() + description.slice(1);
+                
+                // Establecer el icono correspondiente
+                const weatherIcon = document.getElementById('weather-icon');
+                weatherIcon.className = 'weather-icon fas ' + (weatherIcons[iconCode] || 'fa-cloud');
+                
+                // Mostrar la información del clima
+                weatherInfo.style.display = 'block';
+                errorMessage.style.display = 'none';
+            }
+            
+            // Función para mostrar errores
+            function showError(title, details) {
+                errorText.textContent = title;
+                errorDetails.textContent = details;
+                errorMessage.style.display = 'block';
+                weatherInfo.style.display = 'none';
+            }
+            
+            // Event listeners
+            searchBtn.addEventListener('click', searchWeather);
+            
+            cityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWeather();
+                }
+            });
+            
+            // Enfocar el input al cargar
+            cityInput.focus();
+        });
+    </script>
+</body>
+</html>
